@@ -1,0 +1,30 @@
+# Windows-specific overrides for Docker Compose
+# This file is automatically loaded by docker-compose and overrides docker-compose.yml
+
+version: '3.8'
+
+services:
+  auto-reviewer:
+    # Use bridge networking instead of host networking (host networking doesn't work on Windows)
+    network_mode: "bridge"
+    
+    # Add extra_hosts to enable container to reach Windows host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    
+    environment:
+      # Windows-specific LM Studio connection
+      - OPENAI_BASE_URL=http://host.docker.internal:1234/v1
+      
+    # Port mappings if needed (uncomment if your app exposes ports)
+    # ports:
+    #   - "8000:8000"
+
+  auto-reviewer-dev:
+    network_mode: "bridge"
+    
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    
+    environment:
+      - OPENAI_BASE_URL=http://host.docker.internal:1234/v1

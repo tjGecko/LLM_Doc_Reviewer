@@ -1,0 +1,39 @@
+# Core dependencies - compatible versions
+pydantic>=2.0.0,<3.0.0
+click>=8.1,<9
+rich>=13,<14
+python-docx>=1.0,<2
+sentence-transformers>=3,<4
+faiss-cpu>=1.8,<2
+numpy>=1.26,<3
+httpx>=0.27,<0.28
+tiktoken>=0.7,<0.8
+
+# Basic dependencies
+openai>=1.0.0
+python-dotenv>=1.0.0
+aiohttp>=3.8.0
+requests>=2.31.0
+setuptools>=68.0.0
+
+# ML dependencies
+scikit-learn>=1.3.0
+pandas>=2.0.0
+transformers>=4.30.0
+
+# Logging and monitoring
+structlog>=23.0.0
+psutil>=5.9.0
+
+# CrewAI - let it pull in compatible langchain versions
+crewai>=0.28.8,<0.33
+crewai-tools>=0.4,<0.6
+
+# Let CrewAI determine langchain versions
+langsmith>=0.1.0
+
+# Use chromadb compatible version
+chromadb>=0.4.24,<0.5.0
+
+# Use pypdf compatible with other packages  
+pypdf>=4.0.1,<5.0.0

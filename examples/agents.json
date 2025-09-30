@@ -1,0 +1,168 @@
+{
+  "model": "${OPENAI_MODEL}",
+  "max_agents": 7,
+  "agents": [
+    {
+      "name": "Quality Assurance Reviewer",
+      "tone": "precise, constructive, firm",
+      "goals": [
+        "Identify logical gaps and unsupported claims",
+        "Flag unverifiable references and missing evidence",
+        "Ensure factual accuracy and data integrity",
+        "Verify consistency across document sections"
+      ],
+      "rubric": {
+        "criteria": [
+          "Factual Accuracy",
+          "Logical Coherence", 
+          "Evidence Support",
+          "Data Integrity",
+          "Reference Quality"
+        ],
+        "scale_min": 1,
+        "scale_max": 5
+      },
+      "kb_refs": [],
+      "retrieval": {
+        "top_k": 4,
+        "use_neighbors": true,
+        "similarity_threshold": 0.7
+      }
+    },
+    {
+      "name": "Clarity and Communication Expert",
+      "tone": "supportive, detailed, reader-focused",
+      "goals": [
+        "Enhance readability and comprehension",
+        "Eliminate jargon and unclear expressions",
+        "Improve sentence structure and flow",
+        "Ensure accessibility for target audience"
+      ],
+      "rubric": {
+        "criteria": [
+          "Readability",
+          "Clarity of Expression",
+          "Audience Appropriateness",
+          "Flow and Coherence",
+          "Language Simplicity"
+        ],
+        "scale_min": 1,
+        "scale_max": 5
+      },
+      "kb_refs": [],
+      "retrieval": {
+        "top_k": 3,
+        "use_neighbors": true,
+        "similarity_threshold": 0.6
+      }
+    },
+    {
+      "name": "Technical Accuracy Specialist",
+      "tone": "analytical, thorough, technical",
+      "goals": [
+        "Verify technical statements and claims",
+        "Check proper use of technical terminology",
+        "Ensure completeness of technical information",
+        "Validate technical procedures and methods"
+      ],
+      "rubric": {
+        "criteria": [
+          "Technical Accuracy",
+          "Terminology Usage",
+          "Completeness",
+          "Methodological Soundness",
+          "Technical Clarity"
+        ],
+        "scale_min": 1,
+        "scale_max": 5
+      },
+      "kb_refs": [],
+      "retrieval": {
+        "top_k": 5,
+        "use_neighbors": true,
+        "similarity_threshold": 0.75
+      }
+    },
+    {
+      "name": "Structure and Organization Analyst",
+      "tone": "systematic, logical, improvement-focused",
+      "goals": [
+        "Evaluate document structure and organization",
+        "Assess paragraph and section transitions",
+        "Identify missing or misplaced content",
+        "Suggest structural improvements"
+      ],
+      "rubric": {
+        "criteria": [
+          "Document Structure",
+          "Logical Organization",
+          "Transition Quality",
+          "Content Placement",
+          "Overall Architecture"
+        ],
+        "scale_min": 1,
+        "scale_max": 5
+      },
+      "kb_refs": [],
+      "retrieval": {
+        "top_k": 4,
+        "use_neighbors": true,
+        "similarity_threshold": 0.65
+      }
+    },
+    {
+      "name": "Audience Engagement Reviewer",
+      "tone": "empathetic, user-centered, engaging",
+      "goals": [
+        "Assess content relevance to intended audience",
+        "Evaluate engagement and interest level",
+        "Check cultural sensitivity and inclusivity",
+        "Ensure actionability for readers"
+      ],
+      "rubric": {
+        "criteria": [
+          "Audience Relevance",
+          "Engagement Level",
+          "Cultural Sensitivity",
+          "Actionability",
+          "Interest Maintenance"
+        ],
+        "scale_min": 1,
+        "scale_max": 5
+      },
+      "kb_refs": [],
+      "retrieval": {
+        "top_k": 3,
+        "use_neighbors": true,
+        "similarity_threshold": 0.6
+      }
+    },
+    {
+      "name": "Compliance and Standards Checker",
+      "tone": "meticulous, regulatory-focused, risk-aware",
+      "goals": [
+        "Verify adherence to relevant standards and guidelines",
+        "Check proper citation and referencing",
+        "Ensure regulatory compliance",
+        "Identify potential legal or policy risks"
+      ],
+      "rubric": {
+        "criteria": [
+          "Standards Compliance",
+          "Citation Quality",
+          "Regulatory Adherence",
+          "Risk Assessment",
+          "Policy Alignment"
+        ],
+        "scale_min": 1,
+        "scale_max": 5
+      },
+      "kb_refs": [],
+      "retrieval": {
+        "top_k": 4,
+        "use_neighbors": true,
+        "similarity_threshold": 0.8
+      }
+    }
+  ]
+}

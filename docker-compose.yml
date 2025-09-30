@@ -1,0 +1,141 @@
+version: '3.8'
+
+services:
+  auto-reviewer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ${BUILD_TARGET:-production}
+      args:
+        BUILD_TARGET: ${BUILD_TARGET:-production}
+    container_name: auto-reviewer
+    
+    # Network configuration to access host LM Studio
+    network_mode: "host"  # Use host networking on Linux
+    # For Windows/Mac, use port mapping instead:
+    # ports:
+    #   - "8000:8000"  # If the app exposes a web interface
+    
+    # Environment variables for LM Studio connection
+    environment:
+      # LM Studio connection (adjust if your LM Studio runs on different port)
+      - OPENAI_API_KEY=lm-studio
+      - OPENAI_BASE_URL=http://host.docker.internal:1234/v1  # Windows/Mac
+      # For Linux use: http://localhost:1234/v1
+      - OPENAI_MODEL=${OPENAI_MODEL:-openai/gpt-oss-20b}
+      
+      # Embedding configuration
+      - EMBED_MODEL=sentence-transformers/all-MiniLM-L6-v2
+      - EMBED_BATCH_SIZE=32
+      - EMBED_MAX_LENGTH=512
+      
+      # Processing settings
+      - TEMPERATURE=0.2
+      - MAX_TOKENS=2000
+      - MAX_WORKERS=4
+      
+      # Logging
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - PYTHONPATH=/app
+    
+    # Volume mounts for persistent data
+    volumes:
+      # Data persistence
+      - ./data/vector_db:/app/data/vector_db
+      - ./data/cache:/app/data/cache
+      - ./data/outputs:/app/outputs
+      - ./documents:/app/documents:ro  # Read-only document access
+      - ./examples:/app/examples:ro    # Read-only examples
+      
+      # Configuration files
+      - ./agents.json:/app/agents.json:ro
+      - ./.env:/app/.env:ro
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+        reservations:
+          memory: 1G
+          cpus: '0.5'
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "import auto_reviewer; print('OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    # Command override (can be overridden when running)
+    command: ["auto-reviewer", "--help"]
+
+  # Alternative service for development with mounted source code
+  auto-reviewer-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: auto-reviewer-dev
+    network_mode: "host"
+    
+    environment:
+      - OPENAI_API_KEY=lm-studio
+      - OPENAI_BASE_URL=http://host.docker.internal:1234/v1
+      - OPENAI_MODEL=${OPENAI_MODEL:-openai/gpt-oss-20b}
+      - EMBED_MODEL=sentence-transformers/all-MiniLM-L6-v2
+      - TEMPERATURE=0.2
+      - MAX_WORKERS=4
+      - LOG_LEVEL=DEBUG
+      - PYTHONPATH=/app
+    
+    volumes:
+      # Mount source code for development
+      - ./src:/app/src
+      - ./examples:/app/examples
+      - ./tests:/app/tests
+      - ./data/vector_db:/app/data/vector_db
+      - ./data/cache:/app/data/cache
+      - ./data/outputs:/app/outputs
+      - ./documents:/app/documents:ro
+      - ./.env:/app/.env:ro
+    
+    # Keep container running for development
+    command: ["tail", "-f", "/dev/null"]
+    
+    # Don't start by default (use docker-compose up auto-reviewer-dev)
+    profiles:
+      - dev
+
+  # Vector database service (if you want to run a separate vector DB)
+  vector-db:
+    image: qdrant/qdrant:v1.6.0
+    container_name: vector-db
+    ports:
+      - "6333:6333"  # Qdrant HTTP API
+      - "6334:6334"  # Qdrant gRPC API
+    volumes:
+      - ./data/qdrant:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__HTTP_PORT=6333
+      - QDRANT__SERVICE__GRPC_PORT=6334
+    restart: unless-stopped
+    profiles:
+      - vector-db
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  vector_db_data:
+    driver: local
+  cache_data:
+    driver: local
+  outputs_data:
+    driver: local
