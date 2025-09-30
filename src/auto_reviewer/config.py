@@ -84,7 +84,7 @@ class LLMConfig(BaseModel):
         """Create LLM config from environment variables."""
         return cls(
             api_key=os.getenv("OPENAI_API_KEY", "lm-studio"),
-            base_url=os.getenv("OPENAI_BASE_URL", "http://localhost:1234/v1"),
+            base_url=os.getenv("OPENAI_API_BASE", os.getenv("OPENAI_BASE_URL", "http://localhost:1234/v1")),
             model=os.getenv("OPENAI_MODEL", "openai/gpt-oss-20b"),
             temperature=float(os.getenv("TEMPERATURE", "0.2")),
             max_tokens=int(os.getenv("MAX_TOKENS", "2000"))

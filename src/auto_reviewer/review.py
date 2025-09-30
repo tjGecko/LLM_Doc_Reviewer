@@ -65,10 +65,20 @@ class ReviewEngine:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
         
+        # Load agents config to get agent count
+        agents_count = 0
+        if hasattr(self.config, 'agents_config_path'):
+            try:
+                with open(self.config.agents_config_path, 'r', encoding='utf-8') as f:
+                    agents_data = json.load(f)
+                agents_count = len(agents_data.get('agents', []))
+            except Exception:
+                agents_count = 0
+        
         logger.info(
             "Starting document review",
             document=str(document_path),
-            agents=len(self.config.agents),
+            agents=agents_count,
             output_dir=str(output_dir)
         )
         
@@ -257,6 +267,22 @@ class ReviewEngine:
             context.append((chunk, relevance_score))
         
         return context
+    
+    def run_review(self) -> List[AgentReview]:
+        """Run the complete review process (CLI compatibility method).
+        
+        Returns:
+            List of agent reviews from all agents
+        """
+        # The CLI doesn't specify output dir, so use the config's output_dir
+        output_dir = getattr(self.config, 'output_dir', Path('outputs'))
+        
+        # Use the document path from config
+        document_path = getattr(self.config, 'document_path', None)
+        if not document_path:
+            raise ValueError("No document path specified in configuration")
+        
+        return self.review_document(document_path, output_dir)
 
 
 # Convenience functions for CLI integration
